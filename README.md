@@ -1,24 +1,127 @@
 # 飲食紀錄
 
-## 系統架構說明
+以 React + Express + MongoDB 打造的飲食紀錄服務，前後端分離，支援登入、建立/瀏覽/編輯/刪除飲食紀錄與圖片上傳，介面支援 RWD。
 
-本系統採用前後端分離架構，前端使用 React 提供使用者介面，後端使用 Node.js 與 Express 提供 RESTful API，並透過 docker 建立 MongoDB 作為主要資料庫。
-前端透過 HTTP 請求與後端 API 溝通，後端負責處理商業邏輯、資料驗證與資料存取，確保系統模組化與可維護性。
+## 系統架構
+
+- 前端：React (Vite) SPA，呼叫後端 REST API。
+- 後端：Express 提供 Auth/Meals API，Multer 處理圖片，上傳檔案提供靜態服務。
+- 資料庫：MongoDB（可用 docker-compose 啟動）。
 
 ## 技術堆疊
 
-- **frontend:**
-  - React
-  - CSS
-- **backend**
-  - Node.js
-  - Express
-- **database**
+- frontend：React, react-router-dom, Axios, Vite, ESLint
+- backend：Node.js, Express, Mongoose, Multer, JSON Web Token, dotenv, cors
+- infra：MongoDB 7, Docker / Docker Compose
 
-  - MongoDB
-  - Docker
+## 環境需求
 
-## 功能特色
+- Node.js 18+、npm
+- Docker + Docker Compose（用來啟動 MongoDB；如已有 Mongo，可跳過）
+
+## 專案結構
+
+```bash
+114_web_final_project/
+├── backend/
+│   ├── docker/
+│   │   ├── docker-compose.yml
+│   │   └── mongo-init.js
+│   └── server/
+│       ├── app.js
+│       ├── config/
+│       │   └── db.js
+│       ├── controllers/
+│       │   ├── authController.js
+│       │   └── mealController.js
+│       ├── middlewares/
+│       │   ├── auth.js
+│       │   └── errorHandler.js
+│       ├── models/
+│       │   ├── Meal.js
+│       │   └── User.js
+│       ├── repositories/
+│       │   ├── mealRepository.js
+│       │   └── userRepository.js
+│       ├── routes/
+│       │   ├── authRoutes.js
+│       │   └── mealRoutes.js
+│       ├── services/
+│       │   ├── authService.js
+│       │   └── mealService.js
+│       ├── utils/
+│       │   └── validators.js
+│       ├── uploads/
+│       ├── package.json
+│       └── .env
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── api/http.js
+│       ├── components/
+│       ├── contexts/AuthContext.jsx
+│       ├── pages/
+│       ├── App.jsx
+│       ├── index.css
+│       ├── App.css
+│       └── main.jsx
+├── docs/
+└── README.md
+```
+
+## 環境變數
+
+後端 `backend/server/.env`
+
+```bash
+PORT=4000
+MONGO_URI=mongodb://root:rootpass@localhost:27017/webfinal?authSource=admin
+FRONTEND_ORIGIN=http://localhost:5173
+JWT_SECRET=your-secret
+```
+
+前端 `frontend/.env`
+
+```bash
+VITE_API_BASE_URL=http://localhost:4000
+```
+
+## 快速開始
+
+1. 啟動 Mongo（使用 docker-compose）
+
+```bash
+cd backend/docker
+docker compose up -d
+```
+
+2. 啟動後端
+
+```bash
+cd backend/server
+npm install
+npm run dev      # 或 npm start（production）
+# 服務預設 http://localhost:4000
+```
+
+3. 啟動前端
+
+```bash
+cd frontend
+npm install
+npm run dev      # 預設 http://localhost:5173
+```
+
+## 可用指令
+
+- backend：`npm run dev`（開發 hot reload），`npm start`（正式）
+- frontend：`npm run dev`、`npm run build`、`npm run preview`、`npm run lint`
+
+## API 文件
+
+完整端點說明請見 [docs/API.md](docs/API.md)。
+
+## 功能特色概要
 
 ### 一、管理飲食紀錄
 
@@ -81,78 +184,3 @@
 - 未登入: 只能看到首頁、登入、註冊頁面。
 - 已登入: 能看到首頁、上傳瀏覽/編輯/刪除飲食紀錄。
 - 每個使用者只能看到自己的飲食紀錄。
-
-## API 架構
-
-```bash
-    backend
-
-    POST /api/meals
-    GET /api/meals
-    GET /api/meals?date=YYYY-MM-DD
-    GET /api/meals/:id
-    PUT /api/meals/:id
-    DELETE /api/meals/:id
-```
-
-## 前端介面架構
-
-```bash
-    /               首頁
-    # 已登入: Welcome + Navbar
-    # 未登入: Welcome + Navbar + Meals list
-
-    /login          登入
-    /register       註冊
-    /meals/new      新增飲食紀錄
-    /meals/:id      飲食紀錄詳情
-    /meals/:id/edit 飲食紀錄編輯
-```
-
-## 資料庫設計
-
-**User**
-
-- username: String
-- email: String
-- password: String (hashed)
-- createdAt: Date
-
-**Meal**
-
-- userId: ObjectId (ref: User)
-- title: String
-- mealType: Breakfast / Lunch / Dinner
-- date: Date
-- imageUrl: String
-- description: String
-- createdAt: Date
-- updatedAt: Date
-
-## 專案架構
-
-```bash
-114_web_final_project/
- ├── backent/
- │    ├── docker/
- │    └── server/
- ├── frontend/
- │    ├── public/
- │    └── src/
- │        ├── pages/
- │        │    ├── HomePage.jsx
- │        │    ├── LoginPage.jsx
- │        │    ├── RegisterPage.jsx
- │        │    ├── MealCreatePage.jsx
- │        │    └── MealEditPage.jsx
- │        ├── components/
- │        │    ├── Navbar.jsx
- │        │    ├── MealCard.jsx
- │        │    ├── MealInfoModule.jsx
- │        │    └── DateFilter.jsx
- │        ├── App.jsx
- │        ├── index.css
- │        └── main.jsx
- ├── docs/
- └── README.md
-```
