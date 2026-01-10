@@ -21,15 +21,10 @@ export default function RegisterPage() {
     if (form.password.length < 6) return setErr("密碼至少 6 碼");
 
     try {
-      console.log("[REGISTER] sending request...");
-      await http.post("/api/auth/register", form);
-      console.log("[REGISTER] success =", res.data);
+      const res = await http.post("/api/auth/register", form);
       alert("註冊成功，請登入");
       nav("/login");
     } catch (e2) {
-      console.log("[REGISTER] failed status =", err?.response?.status);
-      console.log("[REGISTER] failed data =", err?.response?.data);
-      console.log("[REGISTER] failed message =", err?.message);
       setErr(e2?.response?.data?.message || "註冊失敗");
     }
   };
