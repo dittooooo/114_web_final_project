@@ -2,7 +2,7 @@
 
 ## 系統架構說明
 
-本系統採用前後端分離架構，前端使用 React 提供使用者介面，後端使用 Node.js 與 Express 提供 RESTful API，並透過 MongoDB 作為主要資料庫。
+本系統採用前後端分離架構，前端使用 React 提供使用者介面，後端使用 Node.js 與 Express 提供 RESTful API，並透過 docker 建立 MongoDB 作為主要資料庫。
 前端透過 HTTP 請求與後端 API 溝通，後端負責處理商業邏輯、資料驗證與資料存取，確保系統模組化與可維護性。
 
 ## 技術堆疊
@@ -53,8 +53,7 @@
 
 - 顯示所有飲食紀錄
 - 依照日期排序 (新到舊)
-- 每筆顯示:
-- 日期、餐別、料理名稱、縮圖
+- 每筆顯示: 日期、餐別、料理名稱、縮圖
 
 **2. 依日期查詢:**
 
@@ -87,13 +86,12 @@
 ```bash
     backend
 
-    POST    /api/auth/register
-    POST    /api/auth/login
-    GET     /api/meals
-    GET     /api/meals?date=xxxx-xx-xx
-    POST    /api/meals/:id
-    PUT     /api/meals/:id
-    DELETE  /api/meals/:id
+    POST /api/meals
+    GET /api/meals
+    GET /api/meals?date=YYYY-MM-DD
+    GET /api/meals/:id
+    PUT /api/meals/:id
+    DELETE /api/meals/:id
 ```
 
 ## 前端介面架構
